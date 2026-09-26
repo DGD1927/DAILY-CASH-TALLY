@@ -1,0 +1,191 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Daily Cash Tally</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;700;800&display=swap');
+:root{--navy:#16233f;--navy2:#22335a;--gold:#c9a24a;--gold-dark:#a8822f;--cream:#f3ede0;--paper:#fffdf8;--ink:#1c2331;--muted:#6b7280;--green:#2f7a52;--green-bg:#e3f4e9;--red:#b2413a;--red-bg:#fbe7e5;--amber-bg:#fdf1cf}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);font:14px/1.4 'Inter',Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+input,select,textarea{font-family:'Inter',Arial,sans-serif;color:var(--ink)!important}
+.top{height:62px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.logo{font-family:'Playfair Display',serif;font-weight:900;font-size:20px;letter-spacing:.3px}
+.top button,.btn{border:0;border-radius:8px;padding:9px 13px;font-weight:700;cursor:pointer;transition:transform .12s,filter .12s;font-family:'Inter',Arial,sans-serif}
+.top button{background:rgba(255,255,255,.12);color:#fff;margin-left:6px;border:1px solid rgba(255,255,255,.25)}
+.top button:hover{background:rgba(255,255,255,.22)}
+.wrap{max-width:1200px;margin:14px auto;padding:0 12px}
+.toolbar{background:var(--paper);border:1px solid #e2d9c4;border-radius:10px;padding:10px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;box-shadow:0 1px 3px rgba(22,35,63,.06)}
+.toolbar b{color:var(--navy);letter-spacing:.2px}
+.toolbar input,.login input,.extra input{padding:8px;border:1px solid #cbbf9e;border-radius:6px;background:#fff}
+.btn-blue{background:var(--navy);color:#fff}
+.btn-blue:hover{filter:brightness(1.15)}
+.btn-gray{background:#e9e2cf;color:var(--navy)}
+.btn-gray:hover{filter:brightness(.97)}
+.page{display:none}.page.active{display:block}
+.title{font-family:'Playfair Display',serif;font-size:21px;font-weight:900;margin:14px 0 8px;color:var(--navy)}
+.users{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.user{background:var(--paper);border:1px solid #e2d9c4;border-radius:12px;padding:15px;cursor:pointer;transition:transform .12s,box-shadow .12s;box-shadow:0 1px 3px rgba(22,35,63,.06)}
+.user:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(22,35,63,.12);border-color:var(--gold)}
+.user b{font-size:16px;color:var(--navy)}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;margin-bottom:8px;font-family:'Playfair Display',serif}
+.sheet{display:grid;grid-template-columns:340px 1fr;gap:12px}
+.box{background:var(--paper);border:1px solid #e2d9c4;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(22,35,63,.06)}
+.bar{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#3a2c07;border-bottom:1px solid #b8934a;text-align:center;font-weight:900;font-size:16px;padding:8px;letter-spacing:.3px}
+.cash,.bank,.bills{width:100%;border-collapse:collapse}
+.cash td,.bank td{border-bottom:1px solid #ece3cd;padding:5px 6px;height:30px}
+.cash td:first-child,.bank td:first-child{background:#eef2f8;font-weight:800;text-align:center;width:34%;color:var(--navy)}
+.cash td:nth-child(2),.bank td:nth-child(2){text-align:center;width:8%;font-weight:800;color:var(--muted)}
+.cash td:nth-child(3),.bank td:nth-child(3){width:29%}
+.cash td:nth-child(4),.bank td:nth-child(4){background:#eef2f8;text-align:right;font-weight:800;color:var(--navy)}
+.qty,.bills input,.money{width:100%;border:0;outline:0;background:transparent;color:var(--ink)}
+.qty{text-align:center;font-weight:700}
+.cash .total td,.bank .total td{background:var(--navy);color:#fff;font-weight:900}
+.locker{width:100%;border-collapse:collapse}
+.locker td{border-bottom:1px solid #ece3cd;padding:5px 6px;height:30px}
+.locker td:first-child{background:#eef2f8;font-weight:800;width:55%;color:var(--navy)}
+.locker td:last-child{text-align:right}
+.locker .total td{background:var(--navy);color:#fff;font-weight:900}
+.locker-input-wrap{display:flex;align-items:center;justify-content:flex-end;gap:3px}
+.locker-input-wrap .rs{font-weight:800;color:var(--navy)}
+.locker-amt{width:90px;text-align:right;border:0;outline:0;background:transparent;font-weight:800;color:var(--ink)}
+.bills th{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#3a2c07;border:1px solid #b8934a;padding:8px}
+.bills td{border:1px solid #ece3cd;height:31px}
+.bills td:first-child{text-align:center;width:8%;color:var(--muted)}
+.bills td:nth-child(3){background:#eef2f8;width:16%}
+.bills td input{height:27px;padding:3px}
+.btot{background:var(--navy)!important;color:#fff!important;font-weight:900;text-align:right!important;padding-right:10px}
+.final{margin-top:12px;border:1px solid #e2d9c4;background:var(--paper);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(22,35,63,.06)}
+.finalgrid{display:grid;grid-template-columns:1fr 1fr 1fr}
+.fi{padding:10px;border-right:1px solid #ece3cd}
+.fi:last-child{border:0}
+.fi small{font-weight:800;color:var(--muted);letter-spacing:.2px}
+.fi strong{display:block;font-size:19px;margin-top:4px;color:var(--navy)}
+.moneyfield{display:flex;align-items:center;gap:3px;margin-top:4px}
+.moneyfield .rs{font-weight:900;color:var(--navy);font-size:18px}
+#acme{border:0;outline:0;background:transparent;font-weight:900;font-size:18px;color:var(--navy);width:100%;padding:0}
+#diffWord{display:block;font-size:23px;font-weight:900;letter-spacing:.5px}
+#difference{font-weight:800;font-size:15px;margin-top:3px;color:var(--navy)}
+.diff{background:var(--amber-bg)}.ok{background:var(--green-bg)}.bad{background:var(--red-bg)}
+.fi.ok #diffWord{color:var(--green)}.fi.bad #diffWord{color:var(--red)}.fi.diff #diffWord{color:var(--gold-dark)}
+.actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.extra{background:var(--paper);border:1px solid #e2d9c4;border-radius:10px;margin-top:12px;padding-bottom:8px;overflow:hidden;box-shadow:0 1px 3px rgba(22,35,63,.06)}
+.eg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:9px}
+.eg label{font-size:11px;font-weight:800;display:block;margin-bottom:3px;color:var(--navy)}
+.spellbox{margin-top:12px;background:#eef2f8;border:1px solid #d6dced;border-radius:10px;padding:10px}
+.spelltitle{font-size:11px;font-weight:800;margin-bottom:6px;color:var(--navy);letter-spacing:.2px}
+.spellinput{width:100%;padding:8px;border:1px solid #cbbf9e;border-radius:6px;margin-bottom:7px;background:#fff}
+.spellwords{font-weight:700;font-style:italic;color:var(--navy)}
+.controls{background:var(--paper);border:1px solid #e2d9c4;border-radius:10px;padding:10px;display:flex;gap:8px;align-items:end;flex-wrap:wrap;box-shadow:0 1px 3px rgba(22,35,63,.06)}
+.controls label{font-size:11px;font-weight:800;display:block;margin-bottom:4px;color:var(--navy)}
+.summary{background:var(--paper);border:1px solid #e2d9c4;border-radius:10px;margin-top:12px;overflow:auto;box-shadow:0 1px 3px rgba(22,35,63,.06)}
+.sum{width:100%;border-collapse:collapse}
+.sum th{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#3a2c07;padding:9px;border:1px solid #b8934a}
+.sum td{padding:8px;border:1px solid #ece3cd;text-align:right}
+.sum td:nth-child(2){text-align:left;font-weight:800;color:var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.kpi{background:var(--paper);border:1px solid #e2d9c4;border-radius:10px;padding:11px;color:var(--muted);font-weight:700;box-shadow:0 1px 3px rgba(22,35,63,.06)}
+.kpi b{display:block;font-size:19px;margin-top:3px;color:var(--navy)}
+.login{position:fixed;inset:0;background:rgba(22,35,63,.72);display:none;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(2px)}
+.login>div{background:var(--paper);width:340px;padding:20px;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.login h2{font-family:'Playfair Display',serif;color:var(--navy);margin-top:0}
+.login input{width:100%;margin:8px 0}
+.err{color:var(--red);height:18px;font-size:12px}
+@media(max-width:850px){.sheet{grid-template-columns:1fr}.users{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.users{grid-template-columns:1fr}.finalgrid{grid-template-columns:1fr}.fi{border-right:0;border-bottom:1px solid #ece3cd}.eg{grid-template-columns:1fr}}
+</style></head><body>
+<header class="top"><div class="logo">💰 DAILY CASH TALLY</div><div><span id="who"></span><button id="chpinBtn" onclick="openChangePin()" style="display:none">CHANGE PIN</button><button id="manageBtn" onclick="openManageUsers()" style="display:none">MANAGE USERS</button><button onclick="home()">HOME</button><button onclick="summary()">SUMMARY REPORT</button><button onclick="logout()">LOGOUT</button></div></header>
+<div class="wrap"><div id="dateToolbar" class="toolbar"><b>ENTRY DATE</b><button class="btn btn-gray" onclick="move(-1)">◀</button><input id="date" type="date" onchange="dateChange()"><button class="btn btn-gray" onclick="move(1)">▶</button><button class="btn btn-blue" onclick="today()">TODAY</button><span id="dateInfo"></span></div>
+<section id="homePage" class="page active"><div class="title">ALL USERS</div><div id="users" class="users"></div></section>
+<section id="sheetPage" class="page"><div class="title" id="heading"></div><div class="final"><div class="bar">FINAL TALLY</div><div class="finalgrid"><div class="fi"><small>ACTUAL CASH (CASH + BANK)</small><strong id="actual">₹0.00</strong></div><div class="fi"><small>ACME CASH</small><div class="moneyfield"><span class="rs">₹</span><input id="acme" class="money" type="text" inputmode="decimal" value="0.00"></div></div><div class="fi diff" id="diffbox"><strong id="diffWord">MATCH</strong><div id="difference">₹0.00</div></div></div></div><div class="sheet"><div><div id="lockerBox" class="box" style="display:none"><div class="bar">LOCKER</div><table class="locker"><tbody id="locker"></tbody></table></div><div class="box" style="margin-top:9px"><div class="bar">CASH</div><table class="cash"><tbody id="cash"></tbody></table></div><div class="box" style="margin-top:9px"><div class="bar">BANK</div><table class="bank"><tbody id="bank"></tbody></table></div><div id="bankExtra" style="display:none"><div class="box" style="margin-top:9px"><div class="bar">BANK 2</div><table class="bank"><tbody id="bank2"></tbody></table></div><div class="box" style="margin-top:9px"><div class="bar">BANK 3</div><table class="bank"><tbody id="bank3"></tbody></table></div></div></div><div><div id="billsBox" class="box"><table class="bills"><thead><tr><th>SR NO</th><th>NAME</th><th>DATE</th><th>AMT</th></tr></thead><tbody id="bills"></tbody><tfoot><tr><td colspan="3" class="btot">TOTAL</td><td id="billTotal" class="btot">₹0.00</td></tr></tfoot></table></div><div id="extra" style="display:none"><div class="box"><div class="bar">ANIL SIR</div><table class="bills"><thead><tr><th>SR NO</th><th>NAME</th><th>DATE</th><th>AMT</th></tr></thead><tbody id="anilBills"></tbody><tfoot><tr><td colspan="3" class="btot">TOTAL</td><td id="anilTotal" class="btot">₹0.00</td></tr></tfoot></table></div><div class="box" style="margin-top:9px"><div class="bar">MEENA MADAM &amp; YOGESHWAR SIR</div><table class="bills"><thead><tr><th>SR NO</th><th>NAME</th><th>DATE</th><th>AMT</th></tr></thead><tbody id="meenaBills"></tbody><tfoot><tr><td colspan="3" class="btot">TOTAL</td><td id="meenaTotal" class="btot">₹0.00</td></tr></tfoot></table></div></div><div class="actions"><button class="btn btn-blue" onclick="save()">SAVE ENTRY</button><button class="btn btn-gray" onclick="clearSheet()">CLEAR</button><button class="btn btn-gray" onclick="summary()">VIEW SUMMARY</button></div><div class="spellbox">
+  <div class="spelltitle">SPELL NUMBER</div>
+  <input id="spellInput" class="spellinput" type="number" min="0" step="1" placeholder="Enter number">
+  <div id="spell" class="spellwords">Zero Rupees Only</div>
+</div></div></div></section>
+<section id="summaryPage" class="page"><div class="title">SUMMARY REPORT</div><div class="controls"><div><label>DATE</label><input id="sumDate" type="date"></div><button class="btn btn-blue" onclick="renderSummary()">LOAD DATE</button><button class="btn btn-gray" onclick="csv()">EXPORT CSV</button></div><div class="kpis"><div class="kpi">TOTAL ACTUAL CASH<b id="sa">₹0.00</b></div><div class="kpi">TOTAL ACME CASH<b id="sc">₹0.00</b></div><div class="kpi">TOTAL DIFFERENCE<b id="sd">₹0.00</b></div></div><div class="summary"><table class="sum"><thead><tr><th>SR</th><th>BILLER / USER</th><th>ACTUAL CASH</th><th>ACME CASH</th><th>DIFFERENCE</th></tr></thead><tbody id="sumRows"></tbody></table></div></section></div>
+<div id="login" class="login"><div><h2 id="lt">LOGIN</h2><p>PIN enter करा.</p><input id="pin" type="password" inputmode="numeric" placeholder="PIN"><div id="err" class="err"></div><button class="btn btn-blue" style="width:100%" onclick="login()">LOGIN</button><button class="btn btn-gray" style="width:100%;margin-top:6px" onclick="closeLogin()">CANCEL</button><small>Prototype PIN: MAIN CASH = 0000, बाकी = 1234</small></div></div>
+<div id="pinModal" class="login"><div><h2>CHANGE PIN</h2><input id="oldPin" type="password" inputmode="numeric" placeholder="Current PIN"><input id="newPin1" type="password" inputmode="numeric" placeholder="New PIN"><input id="newPin2" type="password" inputmode="numeric" placeholder="Confirm New PIN"><div id="pinErr" class="err"></div><button class="btn btn-blue" style="width:100%" onclick="savePin()">SAVE</button><button class="btn btn-gray" style="width:100%;margin-top:6px" onclick="closePinModal()">CANCEL</button></div></div>
+<div id="userModal" class="login"><div style="width:380px;max-height:80vh;overflow:auto"><h2>MANAGE USERS</h2><div id="userList"></div><hr style="border:0;border-top:1px solid #e2d9c4;margin:10px 0"><b style="color:var(--navy)">ADD NEW USER</b><input id="newUserName" placeholder="Name" style="margin-top:8px"><input id="newUserPin" type="text" inputmode="numeric" placeholder="4-digit PIN"><div id="userErr" class="err"></div><button class="btn btn-blue" style="width:100%" onclick="addUser()">ADD USER</button><button class="btn btn-gray" style="width:100%;margin-top:6px" onclick="closeUserModal()">CLOSE</button></div></div>
+<script>
+const DEFAULT_USERS=[['MAIN CASH',1,'0000'],['RUPEN',0,'1234'],['SWAMI',0,'1234'],['HARSHAL',0,'1234'],['SHIWAM',0,'1234'],['AMRUTA',0,'1234']];let U=JSON.parse(localStorage.getItem('DCT_USERS')||'null')||DEFAULT_USERS.map(u=>[...u]);function saveUsers(){localStorage.setItem('DCT_USERS',JSON.stringify(U))}if(!localStorage.getItem('DCT_USERS'))saveUsers();const C=[500,200,100,50,20,10,5,2,1],B=[500,200,100,50,20,10];let cur=null,pending=null;
+const $=x=>document.getElementById(x),money=n=>'₹'+(+n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}),key=(u,d)=>'DCT:'+u+':'+d;
+$('date').value=new Date().toISOString().slice(0,10);$('sumDate').value=$('date').value;
+function build(){ $('cash').innerHTML=C.map(d=>`<tr><td>${d}</td><td>x</td><td><input class="qty cq" data-d="${d}" type="number" min="0" value="0"></td><td id="cv${d}">0</td></tr>`).join('')+`<tr><td>COIN BOX</td><td>x</td><td><input class="qty coin" type="number" min="0" value="0"></td><td id="coinv">0</td></tr><tr><td>ADD</td><td>x</td><td><input class="qty add" type="number" min="0" value="0"></td><td id="addv">0</td></tr><tr class="total"><td colspan="3" style="text-align:center">ACTUAL CASH</td><td id="cashActual">0</td></tr>`; $('bank').innerHTML=B.map(d=>`<tr><td>${d}</td><td>x</td><td><input class="qty bq" data-d="${d}" type="number" min="0" value="0"></td><td id="bv${d}">0</td></tr>`).join('')+`<tr class="total"><td colspan="3" style="text-align:center">ACTUAL CASH</td><td id="bankActual">0</td></tr>`;$('bank2').innerHTML=B.map(d=>`<tr><td>${d}</td><td>x</td><td><input class="qty bq2" data-d="${d}" type="number" min="0" value="0"></td><td id="bv2_${d}">0</td></tr>`).join('')+`<tr class="total"><td colspan="3" style="text-align:center">ACTUAL CASH</td><td id="bankActual2">0</td></tr>`;$('bank3').innerHTML=B.map(d=>`<tr><td>${d}</td><td>x</td><td><input class="qty bq3" data-d="${d}" type="number" min="0" value="0"></td><td id="bv3_${d}">0</td></tr>`).join('')+`<tr class="total"><td colspan="3" style="text-align:center">ACTUAL CASH</td><td id="bankActual3">0</td></tr>`;$('bills').innerHTML=Array.from({length:10},(_,i)=>`<tr><td>${i+1}</td><td><input class="bn"></td><td><input class="bd" type="date"></td><td><input class="ba" type="number" min="0"></td></tr>`).join('');$('anilBills').innerHTML=Array.from({length:10},(_,i)=>`<tr><td>${i+1}</td><td><input class="bn"></td><td><input class="bd" type="date"></td><td><input class="aa" type="number" min="0"></td></tr>`).join('');$('meenaBills').innerHTML=Array.from({length:10},(_,i)=>`<tr><td>${i+1}</td><td><input class="bn"></td><td><input class="bd" type="date"></td><td><input class="ma" type="number" min="0"></td></tr>`).join('');document.querySelectorAll('input').forEach(x=>x.addEventListener('input',calc));$('spellInput').addEventListener('input',calc)}build();
+function formatAcme(){const v=Number((''+$('acme').value).replace(/,/g,''))||0;$('acme').value=v.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function buildLocker(){const rows=[['LOCKER NOTES','LOCKER NOTES'],['LOCKER COIN','LOCKER COIN'],['BAD NOTES','BAD NOTES']].concat(U.filter(u=>!u[1]).map(u=>[u[0]+' BOX',u[0]+' BOX']));$('locker').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td><div class="locker-input-wrap"><span class="rs">₹</span><input class="locker-amt" data-label="${r[1]}" type="number" min="0" value="0"></div></td></tr>`).join('')+`<tr class="total"><td>LOCKER TOTAL</td><td id="lockerActual">₹0.00</td></tr>`;$('locker').querySelectorAll('input').forEach(x=>x.addEventListener('input',calc))}
+function deformatAcme(){const v=Number((''+$('acme').value).replace(/,/g,''))||0;$('acme').value=v||''}
+$('acme').addEventListener('focus',deformatAcme);$('acme').addEventListener('blur',formatAcme);formatAcme();
+function home(){show('homePage');renderUsers()}function show(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$('dateToolbar').style.display=id==='summaryPage'?'none':'flex'}
+function renderUsers(){let d=$('date').value;$('users').innerHTML=U.map(u=>{let saved=localStorage.getItem(key(u[0],d));return `<div class="user" onclick="pick('${u[0]}')"><div class="avatar">${u[0][0]}</div><b>${u[0]}</b><div>${u[1]?'Main Cash / Admin Sheet':'Cash Tally User'}</div><small>${saved?'✓ Entry saved for '+d:'No entry for '+d}</small></div>`}).join('')}
+function pick(n){pending=U.find(u=>u[0]===n);$('lt').textContent=pending[0]+' LOGIN';$('pin').value='';$('err').textContent='';$('login').style.display='flex';$('pin').focus()}
+function closeLogin(){$('login').style.display='none'}function login(){if($('pin').value!==pending[2]){$('err').textContent='Wrong PIN';return}cur=pending;closeLogin();$('who').textContent=' '+cur[0];$('chpinBtn').style.display='inline-block';$('manageBtn').style.display=cur[1]?'inline-block':'none';openSheet()}
+function logout(){cur=null;$('who').textContent='';$('chpinBtn').style.display='none';$('manageBtn').style.display='none';home()}function move(n){let d=new Date($('date').value+'T00:00:00');d.setDate(d.getDate()+n);$('date').value=d.toISOString().slice(0,10);dateChange()}function today(){$('date').value=new Date().toISOString().slice(0,10);dateChange()}function dateChange(){renderUsers();if(cur)openSheet()}
+function openChangePin(){$('oldPin').value='';$('newPin1').value='';$('newPin2').value='';$('pinErr').textContent='';$('pinModal').style.display='flex'}
+function closePinModal(){$('pinModal').style.display='none'}
+function savePin(){if($('oldPin').value!==cur[2]){$('pinErr').textContent='Current PIN wrong आहे';return}if(!/^\d{4,}$/.test($('newPin1').value)){$('pinErr').textContent='New PIN किमान 4 अंकी हवा';return}if($('newPin1').value!==$('newPin2').value){$('pinErr').textContent='New PIN जुळत नाही';return}cur[2]=$('newPin1').value;let idx=U.findIndex(u=>u[0]===cur[0]);if(idx>-1)U[idx][2]=cur[2];saveUsers();closePinModal();alert('PIN updated')}
+function openManageUsers(){renderUserList();$('newUserName').value='';$('newUserPin').value='';$('userErr').textContent='';$('userModal').style.display='flex'}
+function closeUserModal(){$('userModal').style.display='none'}
+function renderUserList(){$('userList').innerHTML=U.map((u,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #ece3cd"><span style="font-weight:700;color:var(--navy)">${u[0]}${u[1]?' (Admin)':''}</span>${u[1]?'':'<button class="btn btn-gray" onclick="removeUser('+i+')">REMOVE</button>'}</div>`).join('')}
+function removeUser(i){if(U[i][1])return;if(!confirm('Remove '+U[i][0]+'?'))return;U.splice(i,1);saveUsers();renderUserList();renderUsers();if(cur&&cur[1]){buildLocker();calc()}}
+function addUser(){let name=$('newUserName').value.trim().toUpperCase();let pinv=$('newUserPin').value.trim();if(!name){$('userErr').textContent='Name टाका';return}if(U.some(u=>u[0]===name)){$('userErr').textContent='हा user आधीच आहे';return}if(!/^\d{4,}$/.test(pinv)){$('userErr').textContent='PIN किमान 4 अंकी हवा';return}U.push([name,0,pinv]);saveUsers();renderUserList();renderUsers();$('newUserName').value='';$('newUserPin').value='';if(cur&&cur[1]){buildLocker();calc()}}
+function openSheet(){show('sheetPage');$('heading').textContent=cur[0]+' — '+$('date').value;$('extra').style.display=cur[1]?'block':'none';$('billsBox').style.display=cur[1]?'none':'block';$('lockerBox').style.display=cur[1]?'block':'none';$('bankExtra').style.display=cur[1]?'block':'none';if(cur[1])buildLocker();clearSheet(false);let x=JSON.parse(localStorage.getItem(key(cur[0],$('date').value))||'null');if(x){Object.entries(x.c||{}).forEach(([d,v])=>document.querySelector(`.cq[data-d="${d}"]`).value=v);document.querySelector('.coin').value=x.coin||0;document.querySelector('.add').value=x.add||0;Object.entries(x.b||{}).forEach(([d,v])=>document.querySelector(`.bq[data-d="${d}"]`).value=v);Object.entries(x.b2||{}).forEach(([d,v])=>document.querySelector(`.bq2[data-d="${d}"]`).value=v);Object.entries(x.b3||{}).forEach(([d,v])=>document.querySelector(`.bq3[data-d="${d}"]`).value=v);$('acme').value=x.acme||0;x.rows.forEach((r,i)=>{let tr=$('bills').rows[i];tr.querySelector('.bn').value=r.n;tr.querySelector('.bd').value=r.d;tr.querySelector('.ba').value=r.a});if(x.anilRows)x.anilRows.forEach((r,i)=>{let tr=$('anilBills').rows[i];tr.querySelector('.bn').value=r.n;tr.querySelector('.bd').value=r.d;tr.querySelector('.aa').value=r.a});if(x.meenaRows)x.meenaRows.forEach((r,i)=>{let tr=$('meenaBills').rows[i];tr.querySelector('.bn').value=r.n;tr.querySelector('.bd').value=r.d;tr.querySelector('.ma').value=r.a});if(x.locker)document.querySelectorAll('#locker .locker-amt').forEach(inp=>{if(x.locker[inp.dataset.label]!==undefined)inp.value=x.locker[inp.dataset.label]})}calc();formatAcme()}
+function clearSheet(doCalc=true){document.querySelectorAll('.cq,.bq,.bq2,.bq3,.coin,.add,.ba,.aa,.ma,.locker-amt').forEach(x=>x.value=0);document.querySelectorAll('.bn,.bd').forEach(x=>x.value='');$('acme').value=0;formatAcme();if(doCalc)calc()}
+function calc(){
+ let cash=0, bank=0;
+ document.querySelectorAll('.cq').forEach(i=>{
+   const d=Number(i.dataset.d)||0, qty=Number(i.value)||0, total=d*qty;
+   cash += total;
+   const cell=$('cv'+i.dataset.d);
+   if(cell) cell.textContent=money(total);
+ });
+ const coin=Number(document.querySelector('.coin').value)||0;
+ const add=Number(document.querySelector('.add').value)||0;
+ cash += coin + add;
+ $('coinv').textContent=money(coin);
+ $('addv').textContent=money(add);
+ $('cashActual').textContent=money(cash);
+
+ document.querySelectorAll('.bq').forEach(i=>{
+   const d=Number(i.dataset.d)||0, qty=Number(i.value)||0, total=d*qty;
+   bank += total;
+   const cell=$('bv'+i.dataset.d);
+   if(cell) cell.textContent=money(total);
+ });
+ $('bankActual').textContent=money(bank);
+
+ let bank2=0,bank3=0;
+ document.querySelectorAll('.bq2').forEach(i=>{const d=Number(i.dataset.d)||0,qty=Number(i.value)||0,total=d*qty;bank2+=total;const cell=$('bv2_'+i.dataset.d);if(cell)cell.textContent=money(total)});
+ document.querySelectorAll('.bq3').forEach(i=>{const d=Number(i.dataset.d)||0,qty=Number(i.value)||0,total=d*qty;bank3+=total;const cell=$('bv3_'+i.dataset.d);if(cell)cell.textContent=money(total)});
+ if($('bankActual2'))$('bankActual2').textContent=money(bank2);
+ if($('bankActual3'))$('bankActual3').textContent=money(bank3);
+
+ let lockerTotal=0;
+ document.querySelectorAll('#locker .locker-amt').forEach(inp=>{
+   lockerTotal += Number(inp.value)||0;
+ });
+ if($('lockerActual')) $('lockerActual').textContent=money(lockerTotal);
+
+ const anilTotal=[...document.querySelectorAll('.aa')].reduce((s,x)=>s+(Number(x.value)||0),0);
+ const meenaTotal=[...document.querySelectorAll('.ma')].reduce((s,x)=>s+(Number(x.value)||0),0);
+ $('anilTotal').textContent=money(anilTotal);
+ $('meenaTotal').textContent=money(meenaTotal);
+
+ const actual=cash+bank+bank2+bank3+anilTotal+meenaTotal+lockerTotal;
+ const acme=Number((''+$('acme').value).replace(/,/g,''))||0;
+ const diff=actual-acme;
+
+ $('actual').textContent=money(actual);
+ $('diffWord').textContent=Math.abs(diff)<0.005 ? 'MATCH' : (diff>0 ? 'EXTRA' : 'SHORT');
+ $('difference').textContent=money(Math.abs(diff));
+ $('diffbox').className='fi '+(Math.abs(diff)<0.005?'ok':diff<0?'bad':'diff');
+
+ $('billTotal').textContent=money([...document.querySelectorAll('.ba')].reduce((sum,x)=>sum+(Number(x.value)||0),0));
+
+ const spellValue=Number($('spellInput')?.value);
+ $('spell').textContent=Number.isFinite(spellValue)&&spellValue>0 ? words(Math.floor(spellValue)) : 'Zero Rupees Only';
+}
+function data(){let c={};document.querySelectorAll('.cq').forEach(i=>c[i.dataset.d]=+i.value||0);let b={};document.querySelectorAll('.bq').forEach(i=>b[i.dataset.d]=+i.value||0);let b2={};document.querySelectorAll('.bq2').forEach(i=>b2[i.dataset.d]=+i.value||0);let b3={};document.querySelectorAll('.bq3').forEach(i=>b3[i.dataset.d]=+i.value||0);let rows=[...$('bills').rows].map(r=>({n:r.querySelector('.bn').value,d:r.querySelector('.bd').value,a:+r.querySelector('.ba').value||0}));let anilRows=[...$('anilBills').rows].map(r=>({n:r.querySelector('.bn').value,d:r.querySelector('.bd').value,a:+r.querySelector('.aa').value||0}));let meenaRows=[...$('meenaBills').rows].map(r=>({n:r.querySelector('.bn').value,d:r.querySelector('.bd').value,a:+r.querySelector('.ma').value||0}));let locker={};document.querySelectorAll('#locker .locker-amt').forEach(inp=>{locker[inp.dataset.label]=+inp.value||0});return{c,coin:+document.querySelector('.coin').value||0,add:+document.querySelector('.add').value||0,b,b2,b3,acme:+((''+$('acme').value).replace(/,/g,''))||0,rows,anilRows,meenaRows,locker}}
+function actual(x){return Object.entries(x.c||{}).reduce((s,[d,v])=>s+(+d)*(+v||0),0)+(x.coin||0)+(x.add||0)+Object.entries(x.b||{}).reduce((s,[d,v])=>s+(+d)*(+v||0),0)+Object.entries(x.b2||{}).reduce((s,[d,v])=>s+(+d)*(+v||0),0)+Object.entries(x.b3||{}).reduce((s,[d,v])=>s+(+d)*(+v||0),0)+(x.anilRows||[]).reduce((s,r)=>s+(+r.a||0),0)+(x.meenaRows||[]).reduce((s,r)=>s+(+r.a||0),0)+Object.values(x.locker||{}).reduce((s,v)=>s+(+v||0),0)}
+function save(){if(!cur)return;calc();localStorage.setItem(key(cur[0],$('date').value),JSON.stringify(data()));alert('Entry saved: '+$('date').value);renderUsers()}
+function summary(){show('summaryPage');$('sumDate').value=$('date').value;renderSummary()}function renderSummary(){let d=$('sumDate').value,a=0,c=0;let rows=U.map((u,i)=>{let x=JSON.parse(localStorage.getItem(key(u[0],d))||'null');if(!x)return null;let ac=actual(x),diff=ac-(x.acme||0);a+=ac;c+=x.acme||0;return`<tr><td>${i+1}</td><td>${u[0]}</td><td>${money(ac)}</td><td>${money(x.acme||0)}</td><td>${money(diff)}</td></tr>`}).filter(Boolean).join('');$('sumRows').innerHTML=rows||'<tr><td colspan="5" style="text-align:center">No entries</td></tr>';$('sa').textContent=money(a);$('sc').textContent=money(c);$('sd').textContent=money(a-c)}
+function csv(){let d=$('sumDate').value,s='SR,USER,ACTUAL CASH,ACME CASH,DIFFERENCE\n';U.forEach((u,i)=>{let x=JSON.parse(localStorage.getItem(key(u[0],d))||'null');if(x){let a=actual(x);s+=`${i+1},${u[0]},${a},${x.acme||0},${a-(x.acme||0)}\n`}});let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/csv'}));a.download='cash-summary-'+d+'.csv';a.click()}
+function words(n){if(!n)return'Zero Rupees Only';let o=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'],t=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];let two=x=>x<20?o[x]:t[Math.floor(x/10)]+(x%10?' '+o[x%10]:'');let part=x=>{let r='';if(x>=100){r+=o[Math.floor(x/100)]+' Hundred ';x%=100}if(x)r+=two(x);return r.trim()};let s='';if(n>=1e7){s+=part(Math.floor(n/1e7))+' Crore ';n%=1e7}if(n>=1e5){s+=part(Math.floor(n/1e5))+' Lakh ';n%=1e5}if(n>=1e3){s+=part(Math.floor(n/1e3))+' Thousand ';n%=1e3}return(s+part(n)).trim()+' Rupees Only'}
+renderUsers();
+document.addEventListener('focusin',e=>{const t=e.target;if(t.tagName==='INPUT'&&t.type==='number'&&t.value==='0'){t.value=''}});
+document.addEventListener('focusout',e=>{const t=e.target;if(t.tagName==='INPUT'&&t.type==='number'&&t.value===''){t.value='0';calc()}});
+</script></body></html>
